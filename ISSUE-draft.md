@@ -48,3 +48,13 @@ inherited `Bundle.identifier` definition should render in Portuguese on the pt p
 
 Either would let a specification be translated by a translation source released on its own
 schedule, which is the stated purpose of language packs.
+
+## Proposed fix
+
+https://github.com/hapifhir/org.hl7.fhir.core/pull/2648 adds the missing consumer in the core library: `LanguageUtils.copyToLanguage` applies the
+translation supplements for a StructureDefinition and for the profiles up its `baseDefinition` chain,
+matching on language and only where the element text is still the ancestor's. With that, a language
+pack for IPS translates the inherited text in derived profiles. Two publisher-side fixes are still
+needed for the IG-local case, both noted in the PR: build the supplement with the translation folder's
+language instead of `i18n-default-lang`, and stop `fillSupplement` from dropping the `id@property`
+sub-codes as orphans.
