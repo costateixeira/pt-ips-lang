@@ -1,0 +1,32 @@
+# This is a simple workflow that runs the HL/ FHIR IG Publisher, which builds the IG in https://build.fhir.ig/ig/<repo>/index.html
+
+name: HL7 FHIR Autobuild Trigger
+run-name: ${{ github.actor }} triggered a GitHub Action
+on: 
+  workflow_call: # Reusable by other workflows
+  push:
+    branches-ignore:    
+      - 'gh-pages'
+  pull_request:
+    branches-ignore:    
+      - 'gh-pages'
+  workflow_dispatch:  
+
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output repository information
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log(context.ref + ' - ' + context.repo.owner + '/' + context.repo.repo);
+      - run: |
+          curl --request POST \
+          --header 'content-type: application/json' \
+          --url https://us-central1-fhir-org-starter-project.cloudfunctions.net/ig-commit-trigger \
+          --data "$(jq -n --arg ref "$GH_REF" --arg repo "$GH_REPOSITORY" \
+            '{ref: $ref, repository: {full_name: $repo}}')"
+        env:
+          GH_REF: ${{ github.ref }}
+          GH_REPOSITORY: ${{ github.repository }}
