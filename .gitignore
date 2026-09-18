@@ -22,3 +22,9 @@ Thumbs.db
 # backup files #
 ################
 *.bak
+
+# build artefacts of this test IG #
+###################################
+translations
+*.log
+Requirements-fromNarrative.json
